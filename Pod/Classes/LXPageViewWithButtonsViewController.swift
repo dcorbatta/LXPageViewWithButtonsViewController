@@ -92,9 +92,7 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
     }
     
     deinit {
-        if isViewLoaded() {
-            pageViewScrollView?.removeObserver(self, forKeyPath: "contentOffset")
-        }
+        pageViewScrollView?.removeObserver(self, forKeyPath: "contentOffset")
     }
     
     public override func didReceiveMemoryWarning() {
@@ -117,7 +115,7 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
         NSLayoutConstraint.activateConstraints([
             NSLayoutConstraint(item: buttonsScrollView, attribute: .CenterX, relatedBy: .Equal, toItem: self.view, attribute: .CenterX, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: buttonsScrollView, attribute: .Top, relatedBy: .Equal, toItem: self.topLayoutGuide, attribute: .Bottom, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: buttonsScrollView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 30),
+            NSLayoutConstraint(item: buttonsScrollView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: buttonsScrollView.appearance.button.height),
             NSLayoutConstraint(item: buttonsScrollView, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 1, constant: 0)
             ])
         
@@ -176,7 +174,25 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
     public func updateSelectionIndicatorPosition(offsetX: CGFloat) {
         var frame = buttonsScrollView.selectionIndicatorFrame(currentIdx)
         guard let pageViewScrollView = pageViewScrollView else { return }
-        frame.origin.x += ((offsetX - pageViewScrollView.frame.size.width) / pageViewScrollView.frame.size.width) * buttonsScrollView.appearance.button.width
+        let tabOffset = ((offsetX - pageViewScrollView.frame.size.width) / pageViewScrollView.frame.size.width) * frame.width
+        
+        
+        let percetageMovment =  tabOffset / frame.width
+        var nextBtnFrame = buttonsScrollView.selectionIndicatorFrame(currentIdx)
+        if percetageMovment < 0 && currentIdx != 0 {
+            nextBtnFrame = buttonsScrollView.calButtonFrame(currentIdx-1)
+            //TODO MAKE IT GENERIC
+            let oldWidth = frame.size.width
+            frame.size.width = (1-abs(percetageMovment)) * frame.size.width + abs(percetageMovment) * nextBtnFrame.size.width
+            frame.origin.x +=  tabOffset - (frame.size.width - oldWidth)
+        }else if percetageMovment > 0 && currentIdx != (viewControllers?.count)!-1 {
+            nextBtnFrame = buttonsScrollView.calButtonFrame(currentIdx+1)
+            frame.origin.x += tabOffset
+            frame.size.width = (1-percetageMovment) * frame.size.width + percetageMovment * nextBtnFrame.size.width
+        }
+        
+        
+        
         buttonsScrollView.selectionIndicator.frame = frame
     }
     
@@ -190,10 +206,10 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
         let idx = btn.tag
         /// set the target index for scrolling buttons view purpose
         targetIndex = idx
-        
-        guard let vcs = viewControllers where idx >= 0 && idx < vcs.count else {
-            return
-        }
+        let vcs = viewControllers!
+        //guard let vcs = viewControllers where idx >= 0 && idx < vcs.count else {
+        //    return
+        //}
         
         if idx == currentIdx {
             return
@@ -201,6 +217,8 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
         
         let dir : UIPageViewControllerNavigationDirection = currentIdx < idx ? .Forward :  .Reverse
         var nextIdx = currentIdx
+        setIndex(targetIndex!)
+/*
         while nextIdx != idx  {
             nextIdx  += ((dir == .Forward) ? 1 : -1)
             dispatch_async(dispatch_get_main_queue(), { [weak self, nextIdx, vcs, dir] in
@@ -212,7 +230,7 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
                     }
                 }
                 })
-        }
+        }*/
     }
     
     // MARK: - Controls

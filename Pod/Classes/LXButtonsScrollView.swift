@@ -8,6 +8,22 @@
 
 import UIKit
 
+extension NSAttributedString {
+    func heightWithConstrainedWidth(width: CGFloat) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: CGFloat.max)
+        let boundingBox = self.boundingRectWithSize(constraintRect, options: NSStringDrawingOptions.UsesLineFragmentOrigin, context: nil)
+        
+        return boundingBox.height
+    }
+    
+    func widthWithConstrainedHeight(height: CGFloat) -> CGFloat {
+        let constraintRect = CGSize(width: CGFloat.max, height: height)
+        let boundingBox = self.boundingRectWithSize(constraintRect, options: NSStringDrawingOptions.UsesLineFragmentOrigin, context: nil)
+        
+        return boundingBox.width
+    }
+}
+
 public class LXButtonsScrollView: UIScrollView {
     /// config global appearce settings via LXButtonsScrollView.appreance
     public static var appearance:Appearance = Appearance()
@@ -56,6 +72,8 @@ public class LXButtonsScrollView: UIScrollView {
             btn.titleLabel?.textAlignment = .Center
             btn.setAttributedTitle(attrTitle, forState: .Normal)
             btn.setAttributedTitle(attrTitleSelected, forState: .Selected)
+            //btn.titleLabel!.adjustsFontSizeToFitWidth = true
+            //btn.titleLabel?.lineBreakMode=NSLineBreakMode.ByClipping
             return btn
         }
         
@@ -79,16 +97,28 @@ public class LXButtonsScrollView: UIScrollView {
     
     /// frame calculation functions
     public func calContentSize() -> CGSize {
-        let width  = CGFloat(appearance.button.count) * appearance.button.width + CGFloat(appearance.button.count - 1) * appearance.button.gap + appearance.button.margin.left + appearance.button.margin.right
+        var width : CGFloat = 0.0
+        buttons.forEach {
+            width += ($0.attributedTitleForState(.Normal)?.widthWithConstrainedHeight(appearance.button.height))! + appearance.button.gap
+        }
+        width  += CGFloat(appearance.button.count - 1) * appearance.button.gap + appearance.button.margin.left + appearance.button.margin.right
         let height = appearance.button.height + appearance.button.margin.top + appearance.button.margin.bottom
         return CGSizeMake(width, height)
     }
     
-    public func calButtonFrame(idx: Int) -> CGRect {
-        let idx = CGFloat(idx)
-        return CGRectMake(appearance.button.margin.left + (appearance.button.width + appearance.button.gap) * idx,
+    public func calButtonFrame(index: Int) -> CGRect {
+        let idx = CGFloat(index)
+        let btn = buttons[index]
+        var x : CGFloat = 0
+        if index != 0 {
+            let btnBefore = buttons[index-1]
+            x = btnBefore.frame.origin.x + btnBefore.frame.size.width
+        }
+        
+        let width = (btn.attributedTitleForState(.Normal)?.widthWithConstrainedHeight(appearance.button.height))! + appearance.button.gap
+        return CGRectMake(x + appearance.button.margin.left,
                           appearance.button.margin.top,
-                          appearance.button.width,
+                          width,
                           appearance.button.height)
     }
     public func selectionIndicatorFrame(idx: Int) -> CGRect {
