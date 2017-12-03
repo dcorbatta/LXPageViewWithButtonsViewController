@@ -12,7 +12,7 @@ public protocol LXPageViewWithButtonsViewDelegate: class {
     func pageViewWithButtonsView(pageViewController: UIPageViewController, buttonsScrollView: LXButtonsScrollView, currentIndexUpdated index: Int)
 }
 
-public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewControllerDelegate {
+open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewControllerDelegate {
     /// delegate
     public weak var pageViewWithButtonsViewDelegate: LXPageViewWithButtonsViewDelegate?
     
@@ -75,14 +75,14 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
         return viewControllers?[currentIdx]
     }
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         setupPageViewController()
         setupButtons()
     }
     
     private var viewAppearedOnce = false
-    public override func viewWillAppear(_ animated: Bool) {
+    open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if !viewAppearedOnce {
             setupButtons()
@@ -95,12 +95,12 @@ public class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCo
         pageViewScrollView?.removeObserver(self, forKeyPath: "contentOffset")
     }
     
-    public override func didReceiveMemoryWarning() {
+    open override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    public override func viewWillLayoutSubviews() {
+    open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
         lx_LayoutViews()
