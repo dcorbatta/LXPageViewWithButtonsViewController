@@ -207,31 +207,12 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
         let idx = btn.tag
         /// set the target index for scrolling buttons view purpose
         targetIndex = idx
-        let vcs = viewControllers!
-        //guard let vcs = viewControllers where idx >= 0 && idx < vcs.count else {
-        //    return
-        //}
         
         if idx == currentIdx {
             return
         }
         
-        let dir : UIPageViewControllerNavigationDirection = currentIdx < idx ? .forward :  .reverse
-        var nextIdx = currentIdx
         setIndex(idx: targetIndex!)
-/*
-        while nextIdx != idx  {
-            nextIdx  += ((dir == .Forward) ? 1 : -1)
-            dispatch_async(dispatch_get_main_queue(), { [weak self, nextIdx, vcs, dir] in
-                guard let bself = self else { return }
-                /// set the view controllers to be displayed
-                bself.pageViewController.setViewControllers([vcs[nextIdx]], direction: dir, animated: true) { (finished) in
-                    if finished {
-                        bself.currentIdx = nextIdx
-                    }
-                }
-                })
-        }*/
     }
     
     // MARK: - Controls

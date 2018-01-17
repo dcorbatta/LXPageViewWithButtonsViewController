@@ -107,7 +107,7 @@ public class LXButtonsScrollView: UIScrollView {
     }
     
     public func calButtonFrame(index: Int) -> CGRect {
-        let idx = CGFloat(index)
+        _ = CGFloat(index)
         let btn = buttons[index]
         var x : CGFloat = 0
         if index != 0 {
