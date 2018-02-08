@@ -223,7 +223,7 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
         
         self.pageViewController.setViewControllers([viewControllers[idx]], direction: .forward , animated: false, completion: nil)
         currentIdx = idx
-        
+        self.pageDidChanged(viewControllers[idx])
         guard let pageViewScrollView = pageViewScrollView else { return }
         DispatchQueue.main.async { [weak self] in
             guard let bself = self else { return }
@@ -235,6 +235,9 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
         setIndex(idx: 0)
     }
     
+    open func pageDidChanged(_ viewController: UIViewController){
+        
+    }
     // MARK: - UIPageViewControllerDelegate
     public func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
     }
@@ -244,7 +247,9 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
             guard let curVC = pageViewController.viewControllers?.last,
                 let newCurIdx = viewControllers?.index(of: curVC) else { return }
             self.currentIdx = newCurIdx
+            self.pageDidChanged(curVC)
         }
+        
     }
     
 }
