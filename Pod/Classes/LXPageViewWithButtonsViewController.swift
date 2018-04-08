@@ -84,11 +84,15 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
     private var viewAppearedOnce = false
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let date = Date()
+        print("viewWillAppear start time: \(date)")
         if !viewAppearedOnce {
             setupButtons()
             pageViewController.setViewControllers([viewControllers![0]], direction: .forward, animated: false, completion: nil)
             viewAppearedOnce = true
         }
+        //let elapsedTime = Date.timeIntervalSince(date)
+        print("viewWillAppear start time: \(Date())")
     }
     
     deinit {
@@ -221,9 +225,10 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
         
         if idx >= viewControllers.count { return }
         
+        let prevId = currentIdx
         self.pageViewController.setViewControllers([viewControllers[idx]], direction: .forward , animated: false, completion: nil)
         currentIdx = idx
-        self.pageDidChanged(viewControllers[idx])
+        self.pageDidChanged(viewControllers[prevId],viewControllers[idx])
         guard let pageViewScrollView = pageViewScrollView else { return }
         DispatchQueue.main.async { [weak self] in
             guard let bself = self else { return }
@@ -235,19 +240,21 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
         setIndex(idx: 0)
     }
     
-    open func pageDidChanged(_ viewController: UIViewController){
+    open func pageDidChanged(_ prevViewController:UIViewController?, _ viewController: UIViewController){
         
     }
     // MARK: - UIPageViewControllerDelegate
     public func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+    
     }
     
     public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
             guard let curVC = pageViewController.viewControllers?.last,
-                let newCurIdx = viewControllers?.index(of: curVC) else { return }
+            let newCurIdx = viewControllers?.index(of: curVC) else { return }
+            let prevId = currentIdx
             self.currentIdx = newCurIdx
-            self.pageDidChanged(curVC)
+            self.pageDidChanged(viewControllers?[prevId],curVC)
         }
         
     }
