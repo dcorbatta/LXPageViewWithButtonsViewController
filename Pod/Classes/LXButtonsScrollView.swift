@@ -101,7 +101,7 @@ public class LXButtonsScrollView: UIScrollView {
         buttons.forEach {
             width += ($0.attributedTitle(for: .normal)?.widthWithConstrainedHeight(height: appearance.button.height))! + appearance.button.gap
         }
-        width  += CGFloat(appearance.button.count - 1) * appearance.button.gap + appearance.button.margin.left + appearance.button.margin.right
+        width  += appearance.button.margin.left + appearance.button.margin.right
         let height = appearance.button.height + appearance.button.margin.top + appearance.button.margin.bottom
         return   CGSize(width:width, height:height)
     }

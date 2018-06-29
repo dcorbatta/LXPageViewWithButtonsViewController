@@ -51,13 +51,10 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
         buttonsScrollView.buttons.forEach { $0.isSelected = false }
         buttonsScrollView.buttons[currentIdx].isSelected = true
         
-        /// scroll the scroll view if needed
-        /// if the target button is already visible, then no need to scorll the view
-        if !(targetIndex != nil && buttonsScrollView.isButtonVisible(idx: targetIndex!)) {
+        /// scroll the scroll view to center indicator
             DispatchQueue.main.async { [weak self] in
                 self?.scrollButtonsViewToCurrentIndex()
             }
-        }
         
         if currentIdx == targetIndex {
             targetIndex = nil
@@ -203,7 +200,8 @@ open class LXPageViewWithButtonsViewController: UIViewController, UIPageViewCont
     
     @objc func scrollButtonsViewToCurrentIndex() {
         let targetRect = buttonsScrollView.calButtonFrame(index: currentIdx)
-        buttonsScrollView.scrollRectToVisible(targetRect, animated: true)
+        let centeredRect = CGRect(x: targetRect.minX + targetRect.width/2 - buttonsScrollView.frame.width/2, y: targetRect.minY + targetRect.height/2 - buttonsScrollView.frame.height/2, width: buttonsScrollView.frame.width, height: buttonsScrollView.frame.height)
+        buttonsScrollView.scrollRectToVisible(centeredRect, animated: true)
     }
     
     // MARK: - Buttons

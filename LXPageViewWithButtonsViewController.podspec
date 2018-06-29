@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "LXPageViewWithButtonsViewController"
-  s.version          = "0.1.3.3"
+  s.version          = "0.1.3.4"
   s.summary          = "combines UIPageViewController and highly customisable page selection tabs"
 
   s.description      = <<-DESC
